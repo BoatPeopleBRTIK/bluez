@@ -60,13 +60,23 @@ static ssize_t autopair_pincb(struct btd_adapter *adapter,
 {
 	char addr[18];
 	char pinstr[7];
+	char name[25];
 	uint32_t class;
 
 	ba2str(device_get_address(device), addr);
 
 	class = btd_device_get_class(device);
 
-	DBG("device %s 0x%x", addr, class);
+	device_get_name(device, name, sizeof(name));
+	name[sizeof(name) - 1] = 0;
+
+	DBG("device %s (%s) 0x%x", addr, name, class);
+
+	g_message ("vendor 0x%X product: 0x%X", btd_device_get_vendor (device), btd_device_get_product (device));
+
+	/* The iCade shouldn't use random PINs like normal keyboards */
+	if (name != NULL && strstr(name, "iCade") != NULL)
+		return 0;
 
 	/* This is a class-based pincode guesser. Ignore devices with an
 	 * unknown class.
