@@ -224,6 +224,8 @@ void agent_unref(struct agent *agent)
 	if (agent->ref > 0)
 		return;
 
+	g_assert (agent->ref == 0);
+
 	if (agent->request) {
 		DBusError err;
 		agent_pincode_cb pincode_cb;
