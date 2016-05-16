@@ -114,7 +114,8 @@ and mouse.
 %configure --enable-cups --enable-tools --enable-library \
            --enable-sixaxis \
            --with-systemdsystemunitdir=%{_unitdir} \
-           --with-systemduserunitdir=%{_userunitdir}
+           --with-systemduserunitdir=%{_userunitdir} \
+           --enable-experimental
 
 make %{?_smp_mflags} V=1
 
