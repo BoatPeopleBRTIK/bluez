@@ -10,6 +10,7 @@ URL: http://www.bluez.org/
 
 Source0: http://www.kernel.org/pub/linux/bluetooth/bluez-%{version}.tar.xz
 
+BuildRequires: pkgconfig automake autoconf libtool
 BuildRequires: dbus-devel >= 1.6
 BuildRequires: glib2-devel
 BuildRequires: libical-devel
