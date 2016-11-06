@@ -714,8 +714,6 @@ static void disconnect_cb(struct btd_device *dev, uint8_t reason)
 	if (!reconnect || !reconnect->reconnect)
 		return;
 
-	reconnect_reset(reconnect);
-
 	DBG("Device %s identified for auto-reconnection",
 							device_get_path(dev));
 
