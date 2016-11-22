@@ -2,7 +2,7 @@
 
 Name:    bluez
 Summary: Bluetooth utilities
-Version: 5.40
+Version: 5.42
 Release: 20%{?dist}
 License: GPLv2+
 Group: Applications/System
@@ -113,8 +113,7 @@ Object Exchange daemon for sharing files, contacts etc over bluetooth
 %configure --enable-cups --enable-tools --enable-library \
            --enable-sixaxis \
            --with-systemdsystemunitdir=%{_unitdir} \
-           --with-systemduserunitdir=%{_userunitdir} \
-           --enable-experimental
+           --with-systemduserunitdir=%{_userunitdir}
 
 make %{?_smp_mflags} V=1
 
@@ -170,7 +169,6 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 %{_bindir}/bccmd
 %{_bindir}/bluetoothctl
 %{_bindir}/bluemoon
-%{_bindir}/btattach
 %{_bindir}/btmon
 %{_bindir}/hciattach
 %{_bindir}/hciconfig
@@ -185,7 +183,6 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 %{_mandir}/man1/rfcomm.1.gz
 %{_mandir}/man1/sdptool.1.gz
 %{_mandir}/man1/bccmd.1.*
-%{_mandir}/man1/btattach.1.*
 %{_mandir}/man1/hciattach.1.*
 %{_mandir}/man1/hciconfig.1.*
 %{_mandir}/man1/hcidump.1.*
