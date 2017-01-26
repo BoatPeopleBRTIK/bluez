@@ -19,8 +19,7 @@ CONFIGURE_FLAGS := \
 	--enable-client \
 	--enable-systemd \
 	--enable-threads \
-	--enable-sixaxis \
-	--enable-experimental
+	--enable-sixaxis
 
 %:
 	dh $@ --parallel --with systemd,autoreconf
@@ -32,6 +31,7 @@ override_dh_installinit:
 	dh_installinit -pbluez --name=bluetooth --restart-after-upgrade
 
 override_dh_install:
+	find debian/tmp -type f -name "*.la" -delete
 	dh_install --list-missing
 
 override_dh_strip:

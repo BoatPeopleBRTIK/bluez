@@ -7,7 +7,6 @@ usr/lib/bluetooth/bluetoothd
 usr/bin/bluetoothctl
 usr/bin/bccmd
 usr/bin/bluemoon
-usr/bin/btattach
 usr/bin/btmon
 usr/bin/rctest
 usr/bin/hciattach
@@ -19,6 +18,7 @@ usr/bin/hex2hcd
 usr/bin/l2ping
 usr/bin/l2test
 usr/bin/rfcomm
+usr/bin/mpris-proxy
 tools/mpris-proxy usr/lib/bluetooth
 tools/btmgmt usr/bin
 tools/obexctl usr/bin
@@ -39,6 +39,5 @@ usr/share/man/man1/rfcomm.1
 usr/share/man/man1/rctest.1
 usr/share/man/man1/l2ping.1
 usr/share/man/man1/hid2hci.1
-usr/share/man/man1/btattach.1
 usr/share/man/man8/bluetoothd.8
 debian/source_bluez.py usr/share/apport/package-hooks
