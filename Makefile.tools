@@ -157,7 +157,8 @@ if TOOLS
 bin_PROGRAMS += tools/hciattach tools/hciconfig tools/hcitool tools/hcidump \
 			tools/rfcomm tools/rctest tools/l2test tools/l2ping \
 			tools/sdptool tools/ciptool tools/bccmd \
-			tools/bluemoon tools/hex2hcd tools/mpris-proxy
+			tools/bluemoon tools/hex2hcd tools/mpris-proxy \
+			tools/btmgmt
 
 tools_hciattach_SOURCES = tools/hciattach.c tools/hciattach.h \
 						tools/hciattach_st.c \
@@ -228,6 +229,10 @@ tools_hex2hcd_SOURCES = tools/hex2hcd.c
 
 tools_mpris_proxy_SOURCES = tools/mpris-proxy.c
 tools_mpris_proxy_LDADD = gdbus/libgdbus-internal.la @GLIB_LIBS@ @DBUS_LIBS@
+
+tools_btmgmt_SOURCES = tools/btmgmt.c src/uuid-helper.c client/display.c
+tools_btmgmt_LDADD = lib/libbluetooth-internal.la src/libshared-mainloop.la \
+				-lreadline
 
 dist_man_MANS += tools/hciattach.1 tools/hciconfig.1 \
 			tools/hcitool.1 tools/hcidump.1 \
@@ -343,7 +348,7 @@ EXTRA_DIST += tools/btattach.1
 endif
 
 if READLINE
-noinst_PROGRAMS += attrib/gatttool tools/btmgmt \
+noinst_PROGRAMS += attrib/gatttool \
 			tools/obex-client-tool tools/obex-server-tool \
 			tools/bluetooth-player tools/obexctl
 
@@ -373,10 +378,6 @@ tools_obexctl_SOURCES = tools/obexctl.c \
 				client/display.h client/display.c
 tools_obexctl_LDADD = gdbus/libgdbus-internal.la \
 				@GLIB_LIBS@ @DBUS_LIBS@ -lreadline
-
-tools_btmgmt_SOURCES = tools/btmgmt.c src/uuid-helper.c client/display.c
-tools_btmgmt_LDADD = lib/libbluetooth-internal.la src/libshared-mainloop.la \
-				-lreadline
 endif
 
 if EXPERIMENTAL
