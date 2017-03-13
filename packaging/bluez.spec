@@ -3,7 +3,7 @@
 Name:    bluez
 Summary: Bluetooth utilities
 Version: 5.42
-Release: 21%{?dist}
+Release: 22%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -169,6 +169,7 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 %{_bindir}/bccmd
 %{_bindir}/bluetoothctl
 %{_bindir}/bluemoon
+%{_bindir}/btmgmt
 %{_bindir}/btmon
 %{_bindir}/hciattach
 %{_bindir}/hciconfig
