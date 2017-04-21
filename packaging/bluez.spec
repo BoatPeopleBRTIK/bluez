@@ -44,6 +44,7 @@ Utilities for use in Bluetooth applications:
 	- gatttool
 	- start scripts (Red Hat)
 	- pcmcia configuration files
+    - obex-server-tool
 
 The BLUETOOTH trademarks are owned by Bluetooth SIG, Inc., U.S.A.
 
@@ -179,6 +180,7 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 %{_bindir}/mpris-proxy
 %{_bindir}/gatttool
 %{_bindir}/rctest
+%{_bindir}/obex-server-tool
 %{_mandir}/man1/ciptool.1.gz
 %{_mandir}/man1/hcitool.1.gz
 %{_mandir}/man1/rfcomm.1.gz
