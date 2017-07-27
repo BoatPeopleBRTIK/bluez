@@ -853,7 +853,7 @@ guint obc_session_queue(struct obc_session *session,
 	}
 
 	if (!obc_transfer_register(transfer, session->conn, session->path,
-							session->owner, err)) {
+			session->owner, session->driver->service, err)) {
 		obc_transfer_unregister(transfer);
 		return 0;
 	}
@@ -963,6 +963,7 @@ static void transfer_complete(struct obc_transfer *transfer,
 	if (err != 0)
 		goto fail;
 
+	obs_transfer_cancel_reply(transfer);
 	session_notify_complete(session, transfer);
 
 	return;

@@ -965,6 +965,12 @@ done:
 		g_source_remove(obex->write_source);
 		obex->write_source = 0;
 	}
+	/* Remove timeout when suspend transfer*/
+	if (req && req->timeout_id > 0
+		&& g_obex_packet_get_operation(req->pkt, NULL) == G_OBEX_OP_PUT) {
+		g_source_remove(req->timeout_id);
+		req->timeout_id = 0;
+	}
 }
 
 static void g_obex_srm_resume(GObex *obex)
@@ -997,6 +1003,11 @@ void g_obex_resume(GObex *obex)
 done:
 	if (g_queue_get_length(obex->tx_queue) > 0 || obex->tx_data > 0)
 		enable_tx(obex);
+	/* Add timeout when resume transfer */
+	if (req && req->timeout_id == 0
+		&& g_obex_packet_get_operation(req->pkt, NULL) == G_OBEX_OP_PUT)
+		req->timeout_id =
+			g_timeout_add_seconds(req->timeout, req_timeout, obex);
 }
 
 gboolean g_obex_srm_active(GObex *obex)

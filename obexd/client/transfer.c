@@ -88,6 +88,8 @@ struct obc_transfer {
 	gint64 transferred;
 	gint64 progress;
 	guint progress_id;
+	char *service;		/* Check FTP service */
+	int is_cancel;
 };
 
 static GQuark obc_transfer_error_quark(void)
@@ -122,12 +124,14 @@ static void abort_complete(GObex *obex, GError *err, gpointer user_data)
 
 	transfer->xfer = 0;
 
-	reply = dbus_message_new_method_return(transfer->msg);
-	if (reply)
-		g_dbus_send_message(transfer->conn, reply);
+	if (transfer->msg) {
+		reply = dbus_message_new_method_return(transfer->msg);
+		if (reply)
+			g_dbus_send_message(transfer->conn, reply);
 
-	dbus_message_unref(transfer->msg);
-	transfer->msg = NULL;
+		dbus_message_unref(transfer->msg);
+		transfer->msg = NULL;
+	}
 
 	if (callback == NULL)
 		return;
@@ -142,6 +146,24 @@ static void abort_complete(GObex *obex, GError *err, gpointer user_data)
 		callback->func(transfer, abort_err, callback->data);
 		g_error_free(abort_err);
 	}
+}
+
+static void transfer_set_status(struct obc_transfer *transfer, uint8_t status)
+{
+	if (transfer->status == status)
+		return;
+
+	transfer->status = status;
+
+	g_dbus_emit_property_changed(transfer->conn, transfer->path,
+					TRANSFER_INTERFACE, "Status");
+}
+
+void obs_transfer_cancel_reply(struct obc_transfer *transfer)
+{
+	if (transfer->is_cancel == TRUE && transfer->msg)
+		g_dbus_send_message(transfer->conn,
+			dbus_message_new_method_return(transfer->msg));
 }
 
 static DBusMessage *obc_transfer_cancel(DBusConnection *connection,
@@ -164,6 +186,19 @@ static DBusMessage *obc_transfer_cancel(DBusConnection *connection,
 	if (transfer->status == TRANSFER_STATUS_SUSPENDED)
 		g_obex_resume(transfer->obex);
 
+	/* Fix obexd Cancel transfer issue */
+	if (!strcmp(transfer->service, "FTP") && transfer->filename) {
+		DBG("Start Cancel op: %d", transfer->op);
+		transfer->is_cancel = TRUE;
+		transfer->msg = dbus_message_ref(message);
+
+		if (transfer->op == G_OBEX_OP_GET) {
+			if (transfer->status == TRANSFER_STATUS_SUSPENDED)
+				transfer_set_status(transfer, TRANSFER_STATUS_ACTIVE);
+			remove(transfer->filename);
+			return NULL;
+		}
+	}
 	if (transfer->req > 0) {
 		if (!g_obex_cancel_req(transfer->obex, transfer->req, TRUE))
 			return g_dbus_create_error(message,
@@ -200,17 +235,6 @@ static DBusMessage *obc_transfer_cancel(DBusConnection *connection,
 	transfer->msg = dbus_message_ref(message);
 
 	return NULL;
-}
-
-static void transfer_set_status(struct obc_transfer *transfer, uint8_t status)
-{
-	if (transfer->status == status)
-		return;
-
-	transfer->status = status;
-
-	g_dbus_emit_property_changed(transfer->conn, transfer->path,
-					TRANSFER_INTERFACE, "Status");
 }
 
 static DBusMessage *obc_transfer_suspend(DBusConnection *connection,
@@ -459,6 +483,8 @@ static void obc_transfer_free(struct obc_transfer *transfer)
 	g_free(transfer->type);
 	g_free(transfer->session);
 	g_free(transfer->path);
+	if(transfer->service)
+		g_free(transfer->service);
 	g_free(transfer);
 }
 
@@ -482,6 +508,7 @@ gboolean obc_transfer_register(struct obc_transfer *transfer,
 						DBusConnection *conn,
 						const char *session,
 						const char *owner,
+						const char *service,
 						GError **err)
 {
 	transfer->owner = g_strdup(owner);
@@ -490,6 +517,13 @@ gboolean obc_transfer_register(struct obc_transfer *transfer,
 	transfer->path = g_strdup_printf("%s/transfer%ju", session, counter++);
 
 	transfer->conn = dbus_connection_ref(conn);
+
+	if (service) {
+		transfer->service= malloc(strlen(service) + 1);
+		memcpy(transfer->service, service, strlen(service) + 1);
+	}
+	transfer->is_cancel = FALSE;
+
 	if (transfer->conn == NULL) {
 		g_set_error(err, OBC_TRANSFER_ERROR, -EFAULT,
 						"Unable to connect to D-Bus");
