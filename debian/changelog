@@ -1,3 +1,10 @@
+bluez (5.42-0ubuntu1.2) UNRELEASED; urgency=medium
+
+  * obexd:Fix FTP suspend/cancel transfer issue
+  * sdp: Fix Out-of-bounds heap read in service_search_attr_req function
+
+ -- Chanho Park <chanho61.park@samsung.com>  Fri, 22 Sep 2017 15:15:58 +0900
+
 bluez (5.42-0ubuntu1.1) UNRELEASED; urgency=medium
 
   * install obex-server-tool
